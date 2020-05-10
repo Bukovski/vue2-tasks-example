@@ -42,7 +42,12 @@
       v-if="!gameIsRunning"
   >
     <div class="col-md-12">
-      <button id="start-game">START NEW GAME</button>
+      <button
+          id="start-game"
+          @click="runGame"
+      >
+        START NEW GAME
+      </button>
     </div>
   </section>
 
@@ -51,7 +56,7 @@
       v-else
   >
     <div class="col-md-12">
-      <button id="attack">ATTACK</button>
+      <button id="attack" @click="attack">ATTACK</button>
       <button id="special-attack">SPECIAL ATTACK</button>
       <button id="heal">HEAL</button>
       <button id="give-up">GIVE UP</button>
