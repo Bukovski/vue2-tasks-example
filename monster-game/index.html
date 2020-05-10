@@ -69,12 +69,13 @@
   >
     <div class="col-md-12">
       <ul>
-        <li class="monster-turn">Monster hits Player for 5</li>
-        <li class="player-turn">Player heals for 10</li>
-        <li class="monster-turn">Monster hits Player for 8</li>
-        <li class="player-turn">Player hits Monster hard for 20</li>
-        <li class="monster-turn">Monster hits Player for 5</li>
-        <li class="player-turn">Player hits Monster for 5</li>
+        <li
+            v-for="action in actions"
+            :key="action.id"
+            :class="[ action.isUser ? 'player-turn' : 'monster-turn' ]"
+        >
+          {{ action.message }}
+        </li>
       </ul>
     </div>
   </section>
