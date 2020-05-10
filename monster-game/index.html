@@ -14,7 +14,12 @@
       <h1 class="text-center">YOU</h1>
       
       <div class="health-bar">
-        <div class="health-bar health-progress text-center" style="width: 92%;">92</div>
+        <div
+            class="health-bar health-progress text-center"
+            :style="{ width: playerHealth + '%' }"
+        >
+          {{ playerHealth }}
+        </div>
       </div>
     </div>
 
@@ -22,18 +27,29 @@
       <h1 class="text-center">MONSTER</h1>
       
       <div class="health-bar">
-        <div class="health-bar health-progress text-center" style="width: 75%;">75</div>
+        <div
+            class="health-bar health-progress text-center"
+            :style="{ width: monsterHealth + '%' }"
+        >
+          {{ monsterHealth }}
+        </div>
       </div>
     </div>
   </section>
   
-  <section class="row controls">
+  <section
+      class="row controls"
+      v-if="!gameIsRunning"
+  >
     <div class="col-md-12">
       <button id="start-game">START NEW GAME</button>
     </div>
   </section>
 
-  <section class="row controls">
+  <section
+      class="row controls"
+      v-else
+  >
     <div class="col-md-12">
       <button id="attack">ATTACK</button>
       <button id="special-attack">SPECIAL ATTACK</button>
@@ -42,7 +58,10 @@
     </div>
   </section>
 
-  <section class="row log">
+  <section
+      class="row log"
+      v-if="actions.length > 0"
+  >
     <div class="col-md-12">
       <ul>
         <li class="monster-turn">Monster hits Player for 5</li>
