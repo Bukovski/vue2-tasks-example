@@ -2,12 +2,18 @@
   text-align: center;
 }
 
-.healthbar {
+.health-bar {
   width: 80%;
   height: 40px;
   background-color: #eee;
   margin: auto;
   transition: width 500ms;
+}
+
+.health-progress {
+  margin: 0px;
+  color: white;
+  background-color: green;
 }
 
 .controls, .log {
