@@ -1,0 +1,17 @@
+{
+  "name": "vue2-tasks-example",
+  "version": "1.0.0",
+  "description": "Exercises for develop skills with Vue 2",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bukovski/vue2-tasks-example.git"
+  },
+  "keywords": [
+    "vue 2 example",
+    "vue 2 tasks",
+    "vue 2 monster game"
+  ],
+  "author": "Bukovski",
+  "license": "ISC",
+  "private": false
+}
