@@ -63,6 +63,9 @@ new Vue({
     },
     checkWinner() {
       if (this.monsterHealth <= 0) {
+        this.messageTemplate(true, "PLAYER WON");
+        this.messageTemplate(false, "MONSTER IS DEATH");
+        
         if (confirm('You won! Play again?')) {
           this.runGame();
         } else {
@@ -71,6 +74,9 @@ new Vue({
       }
   
       if (this.playerHealth <= 0) {
+        this.messageTemplate(true, "PLAYER IS DEATH");
+        this.messageTemplate(false, "MONSTER WON");
+  
         if (confirm('You lose! Play again?')) {
           this.runGame();
         } else {
