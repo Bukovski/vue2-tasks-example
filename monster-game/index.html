@@ -16,7 +16,7 @@
       <div class="health-bar">
         <div
             class="health-bar health-progress text-center"
-            :style="{ width: playerHealth + '%' }"
+            :style="{ width: playerHealth + '%', background: playerHealth <= 0 ? 'red' : 'green' }"
         >
           {{ playerHealth }}
         </div>
@@ -29,7 +29,7 @@
       <div class="health-bar">
         <div
             class="health-bar health-progress text-center"
-            :style="{ width: monsterHealth + '%' }"
+            :style="{ width: monsterHealth + '%', background: monsterHealth <= 0 ? 'red' : 'green' }"
         >
           {{ monsterHealth }}
         </div>
