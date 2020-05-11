@@ -16,7 +16,6 @@ new Vue({
     attack() {
       const playerDamage = this.damageTemplate(3, 10);
       this.monsterHealth -= playerDamage;
-      
       this.messageTemplate(true, "PLAYER HITS MONSTER FOR " + playerDamage);
   
       this.monsterAttack();
@@ -26,7 +25,6 @@ new Vue({
     specialAttack() {
       const playerDamage = this.damageTemplate(10, 20);
       this.monsterHealth -= playerDamage;
-  
       this.messageTemplate(true, "PLAYER HITS MONSTER HARD FOR " + playerDamage);
   
       this.monsterAttack();
@@ -34,11 +32,8 @@ new Vue({
       this.checkWinner();
     },
     heal() {
-      if (this.playerHealth <= 90) {
-        this.playerHealth += 10;
-      } else {
-        this.playerHealth = 100;
-      }
+      (this.playerHealth <= 90) ? this.playerHealth += 10 : this.playerHealth = 100;
+      
       this.messageTemplate(true, "PLAYER HEALS FOR 10");
   
       this.monsterAttack();
@@ -61,27 +56,22 @@ new Vue({
       const id = this.damageTemplate(1, 99999);
       this.actions = [ { id, isUser, message }, ...this.actions ];
     },
+    confimAndAction(message) {
+      (confirm('You won! Play again?')) ? this.runGame() : this.gameIsRunning = false;
+    },
     checkWinner() {
       if (this.monsterHealth <= 0) {
         this.messageTemplate(true, "PLAYER WON");
         this.messageTemplate(false, "MONSTER IS DEATH");
         
-        if (confirm('You won! Play again?')) {
-          this.runGame();
-        } else {
-          this.gameIsRunning = false;
-        }
+        this.confimAndAction('You won! Play again?');
       }
   
       if (this.playerHealth <= 0) {
         this.messageTemplate(true, "PLAYER IS DEATH");
         this.messageTemplate(false, "MONSTER WON");
   
-        if (confirm('You lose! Play again?')) {
-          this.runGame();
-        } else {
-          this.gameIsRunning = false;
-        }
+        this.confimAndAction('You lose! Play again?');
       }
     }
   }
