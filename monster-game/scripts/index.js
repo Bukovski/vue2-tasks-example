@@ -26,6 +26,16 @@ new Vue({
   
       this.monsterAttack();
     },
+    heal() {
+      if (this.playerHealth <= 90) {
+        this.playerHealth += 10;
+      } else {
+        this.playerHealth = 100;
+      }
+      this.messageTemplate(true, "PLAYER HEALS FOR 10");
+  
+      this.monsterAttack();
+    },
     damageTemplate(min, max) {
       return Math.max(
         Math.floor(Math.random() * max) + 1
