@@ -11,28 +11,31 @@ new Vue({
       this.gameIsRunning = true;
     },
     attack() {
-      const playerDamage = this.playerAttack();
+      const playerDamage = this.damageTemplate(3, 10);
+      this.monsterHealth -= playerDamage;
+      
       this.messageTemplate(true, "PLAYER HITS MONSTER FOR " + playerDamage);
   
-      const monsterDamage = this.monsterAttack();
-      this.messageTemplate(false, "MONSTER HITS PLAYER FOR " + monsterDamage);
+      this.monsterAttack();
+    },
+    specialAttack() {
+      const playerDamage = this.damageTemplate(10, 20);
+      this.monsterHealth -= playerDamage;
+  
+      this.messageTemplate(true, "PLAYER HITS MONSTER HARD FOR " + playerDamage);
+  
+      this.monsterAttack();
     },
     damageTemplate(min, max) {
       return Math.max(
         Math.floor(Math.random() * max) + 1
         , min);
     },
-    playerAttack() {
-      const damage = this.damageTemplate(3, 10);
-      this.monsterHealth -= damage;
-      
-      return damage;
-    },
     monsterAttack() {
       const damage = this.damageTemplate(5, 12);
       this.playerHealth -= damage;
-      
-      return damage;
+  
+      this.messageTemplate(false, "MONSTER HITS PLAYER FOR " + damage);
     },
     messageTemplate(isUser, message) {
       const id = this.damageTemplate(1, 99999);
