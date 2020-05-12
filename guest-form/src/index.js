@@ -4,7 +4,8 @@ const vm = new Vue({
     firstName: '',
     lastName: '',
     phone: '',
-    guests: []
+    guests: [],
+    sendData: false
   },
   methods: {
     addGuest() {
@@ -12,8 +13,21 @@ const vm = new Vue({
     },
     deleteGuest(index) {
       this.guests.splice(index, 1);
+    },
+    clearGuests() {
+      this.guests = this.guests.filter((str) => str.length);
+    },
+    sendForm() {
+      this.clearGuests();
+      
+      this.sendData = true;
+    }
+  },
+  computed: {
+    fullName() {
+      return this.firstName + " " + this.lastName
     }
   }
-});
+  });
 
 vm.$mount("#guest");

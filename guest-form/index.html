@@ -15,57 +15,92 @@
 <div id="guest" class="container">
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-        <form>
-          <div class="form-group">
-            <label>Email</label>
-            <input class="form-control" type="text" v-model="email">
-          </div>
-          <div class="form-group">
-            <label>First Name</label>
-            <input class="form-control" type="text" v-model="firstName">
-          </div>
-          <div class="form-group">
-            <label>Last Name</label>
-            <input class="form-control" type="text" v-model="lastName">
-          </div>
-          <div class="form-group">
-            <label>Phone</label>
-            <input class="form-control" type="text" v-model="phone">
-          </div>
-          
-          <div class="form-group">
-            <label>Guests</label>
-            <input
-                class="btn btn-primary"
-                type="button"
-                value="+"
-                @click="addGuest"
-            >
-          </div>
-  
-          <ul v-show="guests.length">
-            <li
-                class="form-group"
-                v-for="(guest, index) in guests"
-            >
-              <label @dblclick="deleteGuest(index)">
-                Guest {{ index + 1 }}
-                <span class="alert-danger">
+      <form v-if="!sendData" @submit.prevent="sendForm">
+        <div class="form-group">
+          <label>Email</label>
+          <input class="form-control" type="text" v-model="email">
+        </div>
+        <div class="form-group">
+          <label>First Name</label>
+          <input class="form-control" type="text" v-model="firstName">
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input class="form-control" type="text" v-model="lastName">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input class="form-control" type="text" v-model="phone">
+        </div>
+        
+        <div class="form-group">
+          <label>Guests</label>
+          <input
+              class="btn btn-primary"
+              type="button"
+              value="+"
+              @click="addGuest"
+          >
+        </div>
+        
+        <ul v-show="guests.length">
+          <li
+              class="form-group"
+              v-for="(guest, index) in guests"
+          >
+            <label @dblclick="deleteGuest(index)">
+              Guest {{ index + 1 }}
+              <span class="alert-danger">
                   Dblclick for delete
                 </span>
-              </label>
-              <input
-                  class="form-control"
-                  type="text"
-                  v-model="guests[ index ]"
-              >
-            </li>
-          </ul>
-          
-          <hr>
-          
-          <button class="btn btn-success">Send Data</button>
-        </form>
+            </label>
+            <input
+                class="form-control"
+                type="text"
+                v-model.trim="guests[ index ]"
+            >
+          </li>
+        </ul>
+        
+        <hr>
+        
+        <button class="btn btn-success">Send Data</button>
+      </form>
+      
+      <template v-else>
+        <h2>All done!</h2>
+        <table class="table table-bordered">
+          <tbody>
+          <tr>
+            <td>Email</td>
+            <td>{{ email }}</td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td>{{ fullName }}</td>
+          </tr>
+          <tr>
+            <td>Phone</td>
+            <td>{{ phone }}</td>
+          </tr>
+          <tr>
+            <td>Guests</td>
+            <td>
+              <ul class="list-group">
+                <li
+                    class="list-group-item"
+                    v-for="(guest, index) in guests"
+                    :key="index + guest"
+                    v-if="guest.length"
+                >
+                  {{ guest }}
+                </li>
+              </ul>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </template>
     </div>
   </div>
 </div>
