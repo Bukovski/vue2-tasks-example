@@ -18,24 +18,43 @@
         <form>
           <div class="form-group">
             <label>Email</label>
-            <input type="text" class="form-control">
+            <input class="form-control" type="text" v-model="email">
           </div>
           <div class="form-group">
             <label>First Name</label>
-            <input type="text" class="form-control">
+            <input class="form-control" type="text" v-model="firstName">
           </div>
           <div class="form-group">
             <label>Last Name</label>
-            <input type="text" class="form-control">
+            <input class="form-control" type="text" v-model="lastName">
           </div>
           <div class="form-group">
             <label>Phone</label>
-            <input type="text" class="form-control">
+            <input class="form-control" type="text" v-model="phone">
           </div>
           
           <div class="form-group">
             <label>Guests</label>
-            <input type="button" value="+" class="btn btn-primary">
+            <input
+                class="btn btn-primary"
+                type="button"
+                value="+"
+                @click="addGuest"
+            >
+          </div>
+  
+          <div v-show="guests.length">
+            <div
+                class="form-group"
+                v-for="(guest, index) in guests"
+            >
+              <label>Guest {{ index }}</label>
+              <input
+                  class="form-control"
+                  type="text"
+                  v-model="guests[ index ]"
+              >
+            </div>
           </div>
           
           <hr>
