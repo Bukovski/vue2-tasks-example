@@ -9,6 +9,9 @@ const vm = new Vue({
   methods: {
     addGuest() {
       this.guests.push('');
+    },
+    deleteGuest(index) {
+      this.guests.splice(index, 1);
     }
   }
 });

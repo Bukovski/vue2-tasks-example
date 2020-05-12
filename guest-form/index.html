@@ -43,19 +43,24 @@
             >
           </div>
   
-          <div v-show="guests.length">
-            <div
+          <ul v-show="guests.length">
+            <li
                 class="form-group"
                 v-for="(guest, index) in guests"
             >
-              <label>Guest {{ index }}</label>
+              <label @dblclick="deleteGuest(index)">
+                Guest {{ index + 1 }}
+                <span class="alert-danger">
+                  Dblclick for delete
+                </span>
+              </label>
               <input
                   class="form-control"
                   type="text"
                   v-model="guests[ index ]"
               >
-            </div>
-          </div>
+            </li>
+          </ul>
           
           <hr>
           
@@ -64,6 +69,8 @@
     </div>
   </div>
 </div>
+
+
 
 
 <script src="../assets/scripts/vue.js"></script>
