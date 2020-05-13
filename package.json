@@ -7,9 +7,11 @@
     "url": "git+https://github.com/Bukovski/vue2-tasks-example.git"
   },
   "keywords": [
-    "vue 2 example",
-    "vue 2 tasks",
-    "vue 2 monster game"
+    "vue example",
+    "vue tasks",
+    "vue form",
+    "vue input",
+    "vue native validation"
   ],
   "author": "Bukovski",
   "license": "ISC",

@@ -20,3 +20,15 @@ Training tasks for practice working with `Vue.js`. But they will also be suitabl
 
 
 
+### 2. Work with forms
+
+1. `guest-form`
+* Fill in the form. 
+* When the "Guests" button is clicked, an empty field is added to enter the guest. 
+* By double-clicking on the Guest field, it is deleted. 
+* After clicking the "Send Data" button, hide the form and show the completed table with data from the form
+
+![guest-from](./preview-image/4.guest-from.jpg)
+![result-guest-form](./preview-image/5.result-guest-form.jpg)
+
+
