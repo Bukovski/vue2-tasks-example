@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vue list and style</title>
+</head>
+<body>
+
+
+<div id="product-app">
+  <div v-for="(product) of products" :key="product.id">
+    <h2>
+      <font color="#3ac1ef">{{ product.name }}</font>
+    </h2>
+    <p :style="{ color: product.price ? 'black' : 'red' }">
+      {{ addUsd(product.price) }} - {{ product.description }}
+    </p>
+    <hr/>
+  </div>
+</div>
+
+
+
+<script src="../assets/scripts/vue.js"></script>
+<script>
+  /*
+   1. From the `products` object, display the list of components on the page.
+  Make the dollar sign for price using `toLocaleString`.
+  If `price` is zero then change the text color to red.
+   */
+  const products = [
+    {
+      id: "1",
+      name: "Pencil",
+      price: 1,
+      description: "Perfect for those who can't remember things! 5/5 Highly recommend."
+    },
+    {
+      id: "2",
+      name: "Housing",
+      price: 0,
+      description: "Housing provided for out-of-state students or those who can't commute"
+    },
+    {
+      id: "3",
+      name: "Computer Rental",
+      price: 300,
+      description: "Don't have a computer? No problem!"
+    },
+    {
+      id: "4",
+      name: "Coffee",
+      price: 2,
+      description: "Wake up!"
+    },
+    {
+      id: "5",
+      name: "Snacks",
+      price: 0,
+      description: "Free snacks!"
+    },
+    {
+      id: "6",
+      name: "Rubber Duckies",
+      price: 3.50,
+      description: "To help you solve your hardest coding problems."
+    },
+    {
+      id: "7",
+      name: "Fidget Spinner",
+      price: 21.99,
+      description: "Because we like to pretend we're in high school."
+    },
+    {
+      id: "8",
+      name: "Sticker Set",
+      price: 14.99,
+      description: "To prove to other devs you know a lot."
+    }
+  ];
+  
+  new Vue({
+    el: "#product-app",
+    data: {
+      products: products
+    },
+    methods: {
+      addUsd(num) {
+        return num.toLocaleString( "en-US", { style: "currency", currency: "USD" });
+      }
+    }
+  })
+  
+</script>
+</body>
+</html>

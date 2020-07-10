@@ -29,6 +29,10 @@ Training tasks for practice working with `Vue.js`. But they will also be suitabl
 * After clicking the `Send Data` button, hide the form and show the completed table with data from the form
 * All empty Guest fields are removed from the list after submitting the form
 
+## 3. Mini tasks
+* contains tasks for exploring the main features Vue.js
+
+
 ![guest-from](./preview-image/4.guest-from.jpg)
 ![result-guest-form](./preview-image/5.result-guest-form.jpg)
 
