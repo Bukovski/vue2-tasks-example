@@ -71,6 +71,23 @@
 </div>
 
 
+<div id="colorful-squares">
+  <h2 :style="{ color }">
+    {{ color }}
+  </h2>
+  <div
+      :style="{ backgroundColor: 'yellow', ...styleDiv }"
+      @mousemove="onMouseEnter"
+      @mousedown="onClickToggle"
+      @mouseup="onClickToggle"
+  >
+    <div :style="{ backgroundColor: 'green', ...styleDiv }">
+      <div :style="{ backgroundColor: 'purple', ...styleDiv }"></div>
+    </div>
+  </div>
+</div>
+
+
 <script src="../assets/scripts/vue.js"></script>
 <script>
   /***********************************************
@@ -82,9 +99,6 @@
    If the item is zero make the rear recording background red, if the item is less than 11 make the rear recording background green
    */
   
-    //При зажатом Shift изменяем значение на 10
-    //При зажатом Ctrl изменяем значение на 5
-    
   const counts = [
     { id: 0, item: 0 },
     { id: 1, item: 10 },
@@ -115,6 +129,41 @@
       colorIndicator(item) {
         if (item === 0) return '#ff6666';
         if (item < 11) return '#00b300';
+      }
+    }
+  })
+  
+  
+  /***********************************************
+   2. Create nested squares with different background colors.
+   Place the "Check color" on top, which needs to be changed to the color you've chosen.
+   When you click on the color of the square and move on it, change the color of the inscription and deduce the name of the color.
+   */
+  
+  new Vue({
+    el: "#colorful-squares",
+    data: {
+      clicked: false,
+      color: "Check color",
+      styleDiv: {
+        display: "inline-block",
+        padding: "50px",
+        border: "1px solid",
+      }
+    },
+    methods: {
+      onMouseEnter(event) {
+        if (this.clicked) {
+          const target = event.target;
+          const bgColor = target.style.backgroundColor;
+          
+          this.color = bgColor;
+        }
+      },
+      onClickToggle(event) {
+        event.preventDefault();
+        
+        this.clicked = !this.clicked
       }
     }
   })
