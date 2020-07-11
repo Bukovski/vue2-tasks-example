@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vue event click and mouse</title>
+  <style>
+    .backgroundStyle {
+      padding: 50px;
+      width: 150px;
+      height: 100px;
+      border-radius: 10px;
+      text-align: center;
+      background-color: #FFC53A;
+      transition: .5s ease-in;
+    }
+    
+    .buttonStyle {
+      width: 30px;
+      height: 30px;
+      font-family: sans-serif;
+      font-size: 1em;
+      font-weight: bold;
+      line-height: 3px;
+      color: #333;
+    }
+    
+    .textStyle {
+      font-size: 72px;
+      font-family: sans-serif;
+      font-weight: bold;
+      color: #333;
+    }
+    
+    .item {
+      display: inline-block;
+      margin: 15px;
+    }
+  </style>
+</head>
+<body>
+
+
+<div id="counts-list">
+  <ul>
+    <li
+        v-for="count in counts"
+        :key="count.id"
+        class="item"
+    >
+      <div class="backgroundStyle" :style="{ background: colorIndicator(count.item) }">
+        <div class="textStyle">{{ count.item }}</div>
+        <button class="buttonStyle" @click="onIncrease(count)">+</button>
+        <button class="buttonStyle" @click="onDecrease(count)">-</button>
+      </div>
+    </li>
+  </ul>
+</div>
+
+
+<script src="../assets/scripts/vue.js"></script>
+<script>
+  /***********************************************
+   1. Sign the data from the collection in the form of a block with an item and two buttons + abd -
+   When you click on a button, the item value changes for a specific value.
+   If the value is less or zero, the item should remain zero.
+   If the item is zero make the rear recording background red, if the item is less than 11 make the rear recording background green
+   */
+  const counts = [
+    { id: 0, item: 0 },
+    { id: 1, item: 10 },
+    { id: 2, item: 22 },
+    { id: 3, item: 57 },
+    { id: 4, item: 8 },
+    { id: 5, item: 36 }
+  ];
+  
+  new Vue({
+    el: "#counts-list",
+    data: {
+      counts
+    },
+    methods: {
+      onIncrease(count) {
+        count.item++
+      },
+      onDecrease(count) {
+        count.item--
+        this.zeroLimit(count);
+      },
+      zeroLimit(count) {
+        if (count.item <= 0) {
+          count.item = 0
+        }
+      },
+      colorIndicator(item) {
+        if (item === 0) return '#ff6666';
+        if (item < 11) return '#00b300';
+      }
+    }
+  })
+
+</script>
+</body>
+</html>
