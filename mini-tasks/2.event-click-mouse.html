@@ -49,8 +49,22 @@
     >
       <div class="backgroundStyle" :style="{ background: colorIndicator(count.item) }">
         <div class="textStyle">{{ count.item }}</div>
-        <button class="buttonStyle" @click="onIncrease(count)">+</button>
-        <button class="buttonStyle" @click="onDecrease(count)">-</button>
+        <button
+            class="buttonStyle"
+            @click="onIncrease(count)"
+            @click.ctrl="onIncrease(count, 5)"
+            @click.shift="onIncrease(count, 10)"
+        >
+          +
+        </button>
+        <button
+            class="buttonStyle"
+            @click="onDecrease(count)"
+            @click.ctrl="onDecrease(count, 5)"
+            @click.shift="onDecrease(count, 10)"
+        >
+          -
+        </button>
       </div>
     </li>
   </ul>
@@ -62,9 +76,15 @@
   /***********************************************
    1. Sign the data from the collection in the form of a block with an item and two buttons + abd -
    When you click on a button, the item value changes for a specific value.
+   When Shift is clamped, we change the value to 10
+   When Ctrl is clamped, we change the value by 5
    If the value is less or zero, the item should remain zero.
    If the item is zero make the rear recording background red, if the item is less than 11 make the rear recording background green
    */
+  
+    //При зажатом Shift изменяем значение на 10
+    //При зажатом Ctrl изменяем значение на 5
+    
   const counts = [
     { id: 0, item: 0 },
     { id: 1, item: 10 },
@@ -80,11 +100,11 @@
       counts
     },
     methods: {
-      onIncrease(count) {
-        count.item++
+      onIncrease(count, num = 1) {
+        count.item += num
       },
-      onDecrease(count) {
-        count.item--
+      onDecrease(count, num = 1) {
+        count.item -= num
         this.zeroLimit(count);
       },
       zeroLimit(count) {
