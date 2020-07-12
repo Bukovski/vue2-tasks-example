@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vue component and input</title>
+  <script src="../assets/scripts/vue.js"></script>
+</head>
+<body>
+
+
+<div id="order-form">
+  <form-data :form="form" @show-info-event="handleShowInfo" v-show="!showInfo"></form-data>
+  
+  <form-info :form="form" v-show="showInfo"></form-info>
+</div>
+
+<template id="form-fields">
+  <form @submit.prevent="handleShowInfoLocal">
+    <input
+        type="text"
+        placeholder="First Name"
+        v-model.lazy.trim="form.firstName"
+        v-focus
+    />
+    <br />
+    <input
+        type="text"
+        placeholder="Last Name"
+        v-model.lazy.trim="form.lastName"
+    />
+    <br />
+    <input
+        type="number"
+        v-model.lazy.trim="form.age"
+        placeholder="Age"
+    />
+    <br />
+    
+    <label>
+      <input
+          type="radio"
+          name="gender"
+          value="male"
+          v-model="form.gender"
+      /> Male
+    </label>
+    <br />
+    <label>
+      <input
+          type="radio"
+          name="gender"
+          value="female"
+          v-model="form.gender"
+      /> Female
+    </label>
+    <br />
+    
+    <select v-model="form.destination">
+      <option value="">-- Please Choose a destination --</option>
+      <option v-for="(value, key) in form.selectOptions" :value="key" :key="key">
+        {{ value }}
+      </option>
+    </select>
+    <br />
+    <label>
+      <input
+          type="checkbox"
+          v-model="form.isVegan"
+      /> Vegan?
+    </label>
+    <br />
+    
+    <label>
+      <input
+          type="checkbox"
+          v-model="form.isKosher"
+      /> Kosher?
+    </label>
+    <br />
+    
+    <label>
+      <input
+          type="checkbox"
+          v-model="form.isLactoseFree"
+      /> Lactose Free?
+    </label>
+    <br />
+    
+    <button>Submit</button>
+  </form>
+
+</template>
+
+<template id="form-info">
+  <div>
+    <h2><font color="#3AC1EF">Entered information:</font></h2>
+    <p>Your name: {{ form.firstName }} {{ form.lastName }}</p>
+    <p>Your age: {{ form.age }}</p>
+    <p>Your gender: {{ form.gender }}</p>
+    <p>Your destination: {{ form.destination }}</p>
+    <p>Your dietary restrictions:</p>
+    
+    <p>Vegan: {{ form.isVegan ? "Yes" : "No" }}</p>
+    <p>Kosher: {{ form.isKosher ? "Yes" : "No" }}</p>
+    <p>Lactose Free: {{ form.isLactoseFree ? "Yes" : "No" }}</p>
+  </div>
+</template>
+
+<script>
+  /***********************************************
+   1. Print the form and fill in the data.
+   After submitting the form, display all the data entered in the form, and hide the input form.
+   While the form is not submitted, hide the data output from the screen.
+   Display the form and display the results of filling out the form in two separate components
+   */
+  
+  Vue.directive('focus', {
+    inserted: function (el) {
+      el.focus()
+    }
+  })
+
+  Vue.component('form-data', {
+    template: "#form-fields",
+    props: ['form'],
+    methods: {
+      handleShowInfoLocal: function () {
+        this.$emit('show-info-event')
+      }
+    }
+  });
+  
+  Vue.component('form-info', {
+    template: "#form-info",
+    props: ['form']
+  });
+  
+  new Vue({
+    el: "#order-form",
+    data: {
+      form: {
+        firstName: "",
+        lastName: "",
+        age: "",
+        gender: "",
+        destination: "",
+        isVegan: false,
+        isKosher: false,
+        isLactoseFree: false,
+        selectOptions: {
+          "germany": "Germany",
+          "norway": "Norway",
+          "north-pole": "North Pole",
+          "south-pole": "South Pole"
+        },
+      },
+      showInfo: false
+    },
+    methods: {
+      handleShowInfo: function () {
+        this.showInfo = true;
+      },
+    }
+  })
+
+</script>
+</body>
+</html>
