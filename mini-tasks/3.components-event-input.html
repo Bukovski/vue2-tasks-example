@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Vue component and input</title>
+  <link rel="stylesheet" href="../assets/styles/bootstrap.min.css">
   <script src="../assets/scripts/vue.js"></script>
 </head>
 <body>
 
 
-<div id="order-form">
+<div id="order-form" class="container">
   <form-data :form="form" @show-info-event="handleShowInfo" v-show="!showInfo"></form-data>
   
   <form-info :form="form" v-show="showInfo"></form-info>
@@ -119,7 +120,7 @@
       el.focus()
     }
   })
-
+  
   Vue.component('form-data', {
     template: "#form-fields",
     props: ['form'],
@@ -161,6 +162,163 @@
         this.showInfo = true;
       },
     }
+  })
+
+</script>
+
+<hr>
+
+<div id="price-order" class="container">
+  <div v-show="!successOrder">
+    <h2>Cart</h2>
+    
+    <table class="table">
+      <thead>
+      <tr>
+        <td>Title</td>
+        <td>Price</td>
+        <td>Count</td>
+        <td>Total</td>
+      </tr>
+      </thead>
+      <tbody>
+      <template>
+        <cart-table-row
+            v-for="(product, index) in products"
+            :key="product.id"
+            :product="product"
+            :handle-remove-item="() => handleRemoveItem(index)"
+        ></cart-table-row>
+      </template>
+      <tr>
+        <td>Total</td>
+        <td></td>
+        <td></td>
+        <td>
+          <strong>{{ totalPrice() }}</strong>
+        </td>
+        <td>
+          <button @click="handleOrder">Checkout</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <h2 v-show="successOrder">Congratulations! Your order in the amount of {{ totalPrice() }} rubles has been successfully placed!</h2>
+</div>
+
+
+<template id="cart-table-row">
+  <tr>
+    <td>{{ product.title }}</td>
+    <td>{{ product.price }}</td>
+    <td>
+      <button @click="handleDecrease">-</button>
+      <input type="number" v-model.number.lazy="handleSetValue">
+      <button @click="handleIncrease">+</button>
+    </td>
+    <td>{{ total }}</td>
+    <td><button @click="handleRemoveItem">Delete</button></td>
+  </tr>
+</template>
+
+
+<script>
+  /***********************************************
+   2. Display data from `products` in a table.
+   - To work with the quantity of goods, add input and two + - buttons.
+   - The quantity of goods can be entered in input.
+   - The quantity of goods can be changed using the +/- buttons
+   - each product has a delete button from the basket
+   - the final order value and the cost of each product are calculated.
+   - add a checkout button, after clicking on which the form closes and displays the final screen with congratulations and order value
+   */
+  Vue.component('cart-table-row', {
+    template: "#cart-table-row",
+    props: [ 'product', 'handle-remove-item'],
+    methods: {
+      handleDecrease() {
+        this._setLimitProduct(this.product.current - 1)
+      },
+      handleIncrease() {
+        this._setLimitProduct(this.product.current + 1)
+      },
+      _setLimitProduct(newCurrent) {
+        const count = Math.min(Math.max(newCurrent, 0), this.product.rest);
+        this.product.current = count;
+      }
+    },
+    computed: {
+      handleSetValue: {
+        get() {
+          return this.product.current;
+        },
+        set(newVal){
+          this._setLimitProduct(newVal)
+        }
+      },
+      total() {
+        const { price, current } = this.product;
+        
+        return price * current;
+      }
+    }
+  });
+  
+  
+  const products = [
+    {
+      id: 100,
+      title: 'Ipnone 200',
+      price: 12000,
+      rest: 10, //in the warehouse
+      current: 1 //how many put in the basket
+    },
+    {
+      id: 101,
+      title: 'Samsung AAZ8',
+      price: 22000,
+      rest: 5,
+      current: 1
+    },
+    {
+      id: 103,
+      title: 'Nokia 3310',
+      price: 5000,
+      rest: 2,
+      current: 1
+    },
+    {
+      id: 105,
+      title: 'Huawei ZZ',
+      price: 15000,
+      rest: 8,
+      current: 1
+    }
+  ];
+  
+  new Vue({
+    el: "#price-order",
+    data: {
+      products,
+      successOrder: false
+    },
+    methods: {
+      handleOrder() {
+        this.successOrder = true
+      },
+      handleRemoveItem(index) {
+        this.$delete(this.products, index)
+      },
+      totalPrice() {
+        const _countPrice = (product) => product.price * product.current;
+        
+        return products.reduce((before, product) => {
+          return before + _countPrice(product)
+        }, 0)
+      }
+    },
   })
 
 </script>
