@@ -62,9 +62,59 @@
     }
   });
   
+</script>
+
+<hr>
+
+<div id="directive-app">
+  <img v-avatar="'https://i.pravatar.cc/400'">
+  <img v-avatar.circle="'https://i.pravatar.cc/400'">
+  <img v-avatar.circle.min="'https://i.pravatar.cc/400'">
+  <img v-avatar.circle.max="'https://i.pravatar.cc/400'">
+</div>
+
+
+<script>
+  /***********************************************
+  2.  Using `directive`, paste the image into` img`. By default, the image size is 200px
+   - `circle` will make the image with a round border
+   - `min` reduce the image to 100px
+   - `max` increase the image to 300px
+   */
   
+  new Vue({
+    el: "#directive-app",
+    directives: {
+      avatar: {
+        bind(el, bindings, vnode) {
+          el.style.backgroundImage = "url(" + bindings.value + ")";
+          el.style.backgroundRepeat = "round";
   
+          const circleMod = bindings.modifiers['circle'];
+          const minMod = bindings.modifiers['min'];
+          const maxMod = bindings.modifiers['max'];
   
+          if (circleMod) {
+            el.style.borderRadius = '50%';
+          }
+  
+          if (minMod) {
+            el.style.height = '100px';
+            el.style.width = '100px';
+            return;
+          }
+          if (maxMod) {
+            el.style.height = '300px';
+            el.style.width = '300px';
+            return;
+          }
+  
+          el.style.height = '200px';
+          el.style.width = '200px';
+        }
+      }
+    }
+  })
 </script>
 </body>
 </html>
