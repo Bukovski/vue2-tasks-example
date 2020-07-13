@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vue filter directive</title>
+  <script src="../assets/scripts/vue.js"></script>
+</head>
+<body>
+
+<div id="filters-app">
+  <p>{{ text | uppercase }}</p>
+  <p>{{ text | lowercase }}</p>
+  <p>{{ text | capitalizeWords }}</p>
+  <p>{{ testNumber | numFormat }}</p>
+  <p>{{ day | getDay('ru') | capitalizeWords }}</p>
+  <p>{{ '5' | getDay('en') | uppercase }}</p>
+</div>
+
+<script>
+  /***********************************************
+   1. Make a filter `uppercase` that will translate the entire string to uppercase.
+   - Make a filter `lowercase` that will translate the entire string to lowercase.
+   - Make a filter `capitalizeWords` that will capitalize the first letter of each word in a string.
+   - Make a filter `numFormat`, which will take a parameter as a parameter and separate the spaces of the three digits in that number. For example, from among 12345678 the filter should make 12 345 678.
+   - Make a filter `getDay`, which will take a number from 0 to 6 as a parameter and convert it to the corresponding day name of the week. For example, 1 is converted to 'Monday', 2 to 'Tuesday', and so on. The filter should show the days of the week in Russian and English, for this, make a modifier for the filter that will accept `ru`, `en`
+   */
+  
+  new Vue({
+    el: '#filters-app',
+    data: {
+      text: 'Text is not fish',
+      testNumber: 12345678,
+      day: 2
+    },
+    filters: {
+      uppercase(value) {
+        return value.toUpperCase();
+      },
+      lowercase(value) {
+        return value.toLowerCase();
+      },
+      capitalizeWords(value) {
+        function uppperFirst(str) {
+          if (!str) return str;
+    
+          return str[0].toUpperCase() + str.slice(1);
+        }
+        
+        return value.split(' ').map(text => uppperFirst(text)).join(' ')
+      },
+      numFormat(value) {
+        return value.toString().replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')
+      },
+      getDay(value, postfix) {
+        const weekdays = {
+          "en": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" ],
+          "ru": ["понедельник", "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье" ]
+        }
+        
+        return weekdays[ postfix ][ Number.parseInt(value) ]
+      }
+    }
+  });
+  
+  
+  
+  
+</script>
+</body>
+</html>
