@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fraction calculator</title>
+  <style>
+    form {
+      display: inline-block;
+      margin: 0 auto;
+    }
+    input { width: 4em; }
+    .data-in { display: inline-block; }
+    #error { color: red; }
+    .fraction {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 1em;
+    }
+    .add {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+  <script src="../assets/scripts/vue.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+  <form name="calc">
+    
+    <div class="data-in" v-for="(fraction, index) in fractions" :key="index">
+      <select v-model="selectedOptions[ index - 1 ]" v-if="index > 0">
+        <option v-for="option in options" :value="option">
+          {{ option }}
+        </option>
+      </select>
+      
+      <div class="fraction">
+        <input type="number" v-model="fraction.significant">
+        <hr>
+        <input type="number" v-model="fraction.numeral">
+      </div>
+  
+    </div>
+    
+    <button type="submit">=</button>
+    
+    <div class="fraction">
+      <input type="text" readonly />
+      <hr />
+      <input type="text" readonly />
+    </div>
+    
+    <p id="error"></p>
+    
+    <p>
+      <a @click.prevent.stop="createFraction" class="add">ADD FRACTION</a>
+    </p>
+  </form>
+  
+  <pre>{{ $data }}</pre>
+</div>
+
+<script>
+  const dataTemplate = { significant: '', numeral: '' };
+  
+  new Vue({
+    el: ".wrapper",
+    data: {
+      options: [ '+', '-', '*', '/' ],
+      fractions: [
+        { significant: 5, numeral: 66 },
+        { significant: 1, numeral: 3 }
+      ],
+      selectedOptions: []
+    },
+    methods: {
+      createFraction() {
+        this.fractions.push({ significant: "", numeral: "" })
+      }
+    }
+  })
+</script>
+</body>
+</html>
+
