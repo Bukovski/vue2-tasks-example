@@ -36,9 +36,9 @@
       </select>
       
       <div class="fraction">
-        <input type="number" v-model="fraction.significant">
-        <hr>
         <input type="number" v-model="fraction.numeral">
+        <hr>
+        <input type="number" v-model="fraction.denominator">
       </div>
   
     </div>
@@ -46,9 +46,9 @@
     <button type="submit" @click.prevent.stop="calculate">=</button>
     
     <div class="fraction">
-      <input type="text" readonly :value="result.significant"/>
-      <hr />
       <input type="text" readonly :value="result.numeral"/>
+      <hr />
+      <input type="text" readonly :value="result.denominator"/>
     </div>
     
     <p id="error"></p>
@@ -63,10 +63,30 @@
 
 <script>
   const mathActions = {
-    '+': function (x, y) { return x + y },
-    '-': function (x, y) { return x - y },
-    '*': function (x, y) { return x * y },
-    '/': function (x, y) { return x / y },
+    '+': function (numeral, denominator, fracNum, fracDen) {
+      const num = (numeral * fracDen) + (fracNum * denominator),
+        den = denominator * fracDen;
+      
+      return { num, den }
+    },
+    '-': function (numeral, denominator, fracNum, fracDen) {
+      const num = (numeral * fracDen) - (fracNum * denominator),
+        den = denominator * fracDen;
+  
+      return { num, den }
+    },
+    '*': function (numeral, denominator, fracNum, fracDen) {
+      const num = numeral * fracNum,
+        den = denominator * fracDen;
+  
+      return { num, den }
+    },
+    '/': function (numeral, denominator, fracNum, fracDen) {
+      const num = numeral * fracDen,
+        den = denominator * fracNum;
+  
+      return { num, den }
+    }
   }
   
   new Vue({
@@ -74,35 +94,45 @@
     data: {
       options: [ '+', '-', '*', '/' ],
       fractions: [
-        { significant: 5, numeral: 66 },
-        { significant: 1, numeral: 3 }
+        { numeral: 6, denominator: 5 },
+        { numeral: 3, denominator: 4 },
       ],
       selectedOptions: [ "+" ],
-      result: { significant: "", numeral: "" }
+      result: { numeral: "", denominator: "" }
     },
     methods: {
+      resetResult() {
+        this.result.numeral = "";
+        this.result.denominator = "";
+      },
       createFraction() {
-        this.fractions.push({ significant: "0", numeral: "0" });
+        this.fractions.push({ numeral: "0", denominator: "0" });
         this.selectedOptions.push("+");
+        this.resetResult();
       },
       calculate() {
-        let significant = 0;
+        let denominator = 0;
         let numeral = 0;
         
         this.fractions.forEach((fraction, index) => {
+          const fracNum = parseInt(fraction.numeral);
+          const fracDen = parseInt(fraction.denominator);
+          
           if (index === 0) {
-            significant = parseInt(fraction.significant);
-            numeral = parseInt(fraction.numeral);
+            numeral = fracNum;
+            denominator = fracDen;
           } else {
             const currentAction = this.selectedOptions[ index - 1 ];
             
-            significant = mathActions[currentAction](significant, parseInt(fraction.significant));
-            numeral = mathActions[currentAction](numeral, parseInt(fraction.numeral));
+            const { den, num } = mathActions[ currentAction ](numeral, denominator, fracNum, fracDen)
+  
+            numeral = num;
+            denominator = den;
           }
         })
   
-        this.result.significant = significant;
         this.result.numeral = numeral;
+        this.result.denominator = denominator;
       }
     },
     
