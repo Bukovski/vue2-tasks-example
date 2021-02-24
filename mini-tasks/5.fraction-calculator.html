@@ -43,12 +43,12 @@
   
     </div>
     
-    <button type="submit">=</button>
+    <button type="submit" @click.prevent.stop="calculate">=</button>
     
     <div class="fraction">
-      <input type="text" readonly />
+      <input type="text" readonly :value="result.significant"/>
       <hr />
-      <input type="text" readonly />
+      <input type="text" readonly :value="result.numeral"/>
     </div>
     
     <p id="error"></p>
@@ -62,7 +62,12 @@
 </div>
 
 <script>
-  const dataTemplate = { significant: '', numeral: '' };
+  const mathActions = {
+    '+': function (x, y) { return x + y },
+    '-': function (x, y) { return x - y },
+    '*': function (x, y) { return x * y },
+    '/': function (x, y) { return x / y },
+  }
   
   new Vue({
     el: ".wrapper",
@@ -72,13 +77,35 @@
         { significant: 5, numeral: 66 },
         { significant: 1, numeral: 3 }
       ],
-      selectedOptions: []
+      selectedOptions: [ "+" ],
+      result: { significant: "", numeral: "" }
     },
     methods: {
       createFraction() {
-        this.fractions.push({ significant: "", numeral: "" })
+        this.fractions.push({ significant: "0", numeral: "0" });
+        this.selectedOptions.push("+");
+      },
+      calculate() {
+        let significant = 0;
+        let numeral = 0;
+        
+        this.fractions.forEach((fraction, index) => {
+          if (index === 0) {
+            significant = parseInt(fraction.significant);
+            numeral = parseInt(fraction.numeral);
+          } else {
+            const currentAction = this.selectedOptions[ index - 1 ];
+            
+            significant = mathActions[currentAction](significant, parseInt(fraction.significant));
+            numeral = mathActions[currentAction](numeral, parseInt(fraction.numeral));
+          }
+        })
+  
+        this.result.significant = significant;
+        this.result.numeral = numeral;
       }
-    }
+    },
+    
   })
 </script>
 </body>
