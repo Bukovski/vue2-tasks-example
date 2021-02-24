@@ -26,7 +26,7 @@
 <body>
 
 <div class="wrapper">
-  <form name="calc">
+  <form name="calc" @submit.prevent="calculate">
     
     <div class="data-in" v-for="(fraction, index) in fractions" :key="index">
       <select v-model="selectedOptions[ index - 1 ]" v-if="index > 0">
@@ -36,20 +36,18 @@
       </select>
       
       <div class="fraction">
-        <input type="number" v-model="fraction.numeral">
+        <input type="number" v-model.number="fraction.numeral">
         <hr>
-        <input type="number" v-model="fraction.denominator">
+        <input type="number" v-model.number="fraction.denominator">
       </div>
   
     </div>
     
-    <button type="submit" @click.prevent.stop="calculate">=</button>
-    
-    <div class="fraction">
-      <input type="text" readonly :value="result.numeral"/>
-      <hr />
-      <input type="text" readonly :value="result.denominator"/>
-    </div>
+    <form-result :data-value="result"></form-result>
+    <form-result
+        :data-value="reduceFraction"
+        v-if="reduceFraction && reduceFraction.numeral"
+    ></form-result>
     
     <p id="error"></p>
     
@@ -60,6 +58,17 @@
   
   <pre>{{ $data }}</pre>
 </div>
+
+<template id="form-result">
+  <span>
+    <button type="submit">=</button>
+    <div class="fraction">
+      <input type="text" readonly :value="dataValue.numeral"/>
+      <hr />
+      <input type="text" readonly :value="dataValue.denominator"/>
+    </div>
+  </span>
+</template>
 
 <script>
   const mathActions = {
@@ -88,7 +97,6 @@
       return { num, den }
     }
   }
-
 
   const greatestCommonDivisor = (a, b) => {
     if (typeof a !== 'number' || typeof b !== 'number') throw "Impossible to find greatest common divisor for " + a + " and " + b;
@@ -131,6 +139,10 @@
     return { num, den }
   }
 
+  Vue.component('form-result', {
+    template: "#form-result",
+    props: ['dataValue']
+  });
   
   new Vue({
     el: ".wrapper",
@@ -141,7 +153,8 @@
         { numeral: 3, denominator: 4 },
       ],
       selectedOptions: [ "+" ],
-      result: { numeral: "", denominator: "" }
+      result: { numeral: "", denominator: "" },
+      reduceFraction: {},
     },
     methods: {
       resetResult() {
@@ -152,6 +165,17 @@
         this.fractions.push({ numeral: "0", denominator: "0" });
         this.selectedOptions.push("+");
         this.resetResult();
+      },
+      smallDenominator(numeral, denominator) {
+        let { num, den } = simplify(numeral, denominator);
+  
+        if (numeral !== num || denominator !== den) {
+          this.reduceFraction.numeral = num;
+          this.reduceFraction.denominator = den;
+        } else {
+          delete this.reduceFraction.numeral;
+          delete this.reduceFraction.denominator;
+        }
       },
       calculate() {
         let denominator = 0;
@@ -167,17 +191,17 @@
           } else {
             const currentAction = this.selectedOptions[ index - 1 ];
             
-            const { den, num } = mathActions[ currentAction ](numeral, denominator, fracNum, fracDen)
+            const { den, num } = mathActions[ currentAction ](numeral, denominator, fracNum, fracDen);
   
             numeral = num;
             denominator = den;
           }
         })
-        
-        const { num, den } = simplify(numeral, denominator);
   
-        this.result.numeral = num;
-        this.result.denominator = den;
+        this.smallDenominator(numeral, denominator);
+  
+        this.result.numeral = numeral;
+        this.result.denominator = denominator;
       },
     },
     
