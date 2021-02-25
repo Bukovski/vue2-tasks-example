@@ -9,17 +9,49 @@
       margin: 0 auto;
     }
     input { width: 4em; }
-    .data-in { display: inline-block; }
-    .error { color: red; }
+    
+    .data-in {
+      display: inline-block;
+      position: relative;
+    }
     .fraction {
       display: inline-block;
       vertical-align: middle;
       margin: 0 1em;
     }
+    
+    .add-wrapper { margin-top: 40px; }
     .add {
       cursor: pointer;
       text-decoration: underline;
     }
+    
+    .error { color: red; }
+
+    .close{
+      position: absolute;
+      top: 66px;
+      right: 40px;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      transition: 1s;
+    }
+
+    .close:before,
+    .close:after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      width: 16px;
+      height: 4px;
+      background: #e62f57;
+    }
+    .close:before { transform: rotate(45deg); }
+    .close:after { transform: rotate(-45deg); }
+    
+    .close:hover { transform: rotate(180deg); }
+
   </style>
   <script src="../assets/scripts/vue.js"></script>
 </head>
@@ -29,6 +61,8 @@
   <form name="calc" @submit.prevent="calculate">
     
     <div class="data-in" v-for="(fraction, index) in fractions" :key="index">
+      <span class="close" @click="removeFraction(index)"></span>
+      
       <select v-model="selectedOptions[ index - 1 ]" v-if="index > 0">
         <option v-for="option in options" :value="option">
           {{ option }}
@@ -40,7 +74,6 @@
         <hr>
         <input type="number" v-model.number="fraction.denominator">
       </div>
-  
     </div>
     
     <form-result :data-value="result"></form-result>
@@ -51,7 +84,7 @@
     
     <p class="error" v-show="errorChecking.length">{{ errorChecking }}</p>
     
-    <p>
+    <p class="add-wrapper">
       <a @click.prevent.stop="createFraction" class="add">ADD FRACTION</a>
     </p>
   </form>
@@ -81,64 +114,64 @@
     '-': function (numeral, denominator, fracNum, fracDen) {
       const num = (numeral * fracDen) - (fracNum * denominator),
         den = denominator * fracDen;
-  
+      
       return { num, den }
     },
     '*': function (numeral, denominator, fracNum, fracDen) {
       const num = numeral * fracNum,
         den = denominator * fracDen;
-  
+      
       return { num, den }
     },
     '/': function (numeral, denominator, fracNum, fracDen) {
       const num = numeral * fracDen,
         den = denominator * fracNum;
-  
+      
       return { num, den }
     }
   }
-
+  
   const greatestCommonDivisor = (a, b) => {
     if (typeof a !== 'number' || typeof b !== 'number') throw "Impossible to find greatest common divisor for " + a + " and " + b;
-  
+    
     if (a < b) {
       const temp = b;
-    
+      
       b = a;
       a = temp;
     }
-  
+    
     if (b === 0) return 1;
-  
+    
     let divider = b;
-  
+    
     while (a % b !== 0) {
       const temp = b;
-    
+      
       b = a % b;
       a = temp;
-    
+      
       divider = b;
     }
-  
+    
     return divider;
   }
-
+  
   // Reduce fraction to new denominator
   const simplify = (num, den) => {
     if (num < 0 && den < 0) {
       num *= -1;
       den *= -1;
     }
-  
+    
     const gcd = greatestCommonDivisor(num, den);
-  
+    
     num /= gcd;
     den /= gcd;
-  
+    
     return { num, den }
   }
-
+  
   
   Vue.component('form-result', {
     template: "#form-result",
@@ -169,7 +202,7 @@
       },
       smallDenominator(numeral, denominator) {
         let { num, den } = simplify(numeral, denominator);
-  
+        
         if (numeral !== num || denominator !== den) {
           this.reduceFraction.numeral = num;
           this.reduceFraction.denominator = den;
@@ -178,40 +211,44 @@
           delete this.reduceFraction.denominator;
         }
       },
+      removeFraction(index) {
+        this.fractions.splice(index, 1);
+        this.selectedOptions.splice(index, 1);
+      },
       calculate() {
         try {
-        let denominator = 0;
-        let numeral = 0;
-        
-        this.fractions.forEach((fraction, index) => {
-          const fracNum = parseInt(fraction.numeral);
-          const fracDen = parseInt(fraction.denominator);
+          let denominator = 0;
+          let numeral = 0;
           
-          if (index === 0) {
-            numeral = fracNum;
-            denominator = fracDen;
-          } else {
-            const currentAction = this.selectedOptions[ index - 1 ];
-            const operation = mathActions[currentAction];
-            const { den, num } = operation(numeral, denominator, fracNum, fracDen);
-  
-            numeral = num;
-            denominator = den;
-          }
-        })
-        
-        this.smallDenominator(numeral, denominator);
-  
-        this.result.numeral = numeral;
-        this.result.denominator = denominator;
+          this.fractions.forEach((fraction, index) => {
+            const fracNum = parseInt(fraction.numeral);
+            const fracDen = parseInt(fraction.denominator);
+            
+            if (index === 0) {
+              numeral = fracNum;
+              denominator = fracDen;
+            } else {
+              const currentAction = this.selectedOptions[ index - 1 ];
+              const operation = mathActions[currentAction];
+              const { den, num } = operation(numeral, denominator, fracNum, fracDen);
+              
+              numeral = num;
+              denominator = den;
+            }
+          })
+          
+          this.smallDenominator(numeral, denominator);
+          
+          this.result.numeral = numeral;
+          this.result.denominator = denominator;
         } catch (err) {
           this.errorMessage = err.message
         }
       },
       validate({ numeral, denominator }) {
-        console.log(numeral, denominator)
         if (parseInt(numeral) === 0 || parseInt(denominator) === 0 ) return "Division by zero";
         if (isNaN(numeral) || isNaN(denominator)) return "Enter a number";
+        
         return "";
       },
     },
@@ -221,7 +258,7 @@
         
         for (let i = 0; i < this.fractions.length; i++) {
           const fraction = this.fractions[ i ];
-
+          
           errorMessage = this.validate(fraction);
         }
         
