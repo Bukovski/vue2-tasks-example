@@ -10,7 +10,7 @@
     }
     input { width: 4em; }
     .data-in { display: inline-block; }
-    #error { color: red; }
+    .error { color: red; }
     .fraction {
       display: inline-block;
       vertical-align: middle;
@@ -49,7 +49,7 @@
         v-if="reduceFraction && reduceFraction.numeral"
     ></form-result>
     
-    <p id="error"></p>
+    <p class="error" v-show="errorChecking.length">{{ errorChecking }}</p>
     
     <p>
       <a @click.prevent.stop="createFraction" class="add">ADD FRACTION</a>
@@ -63,9 +63,9 @@
   <span>
     <button type="submit">=</button>
     <div class="fraction">
-      <input type="text" readonly :value="dataValue.numeral"/>
+      <input type="number" readonly :value="dataValue.numeral"/>
       <hr />
-      <input type="text" readonly :value="dataValue.denominator"/>
+      <input type="number" readonly :value="dataValue.denominator"/>
     </div>
   </span>
 </template>
@@ -139,6 +139,7 @@
     return { num, den }
   }
 
+  
   Vue.component('form-result', {
     template: "#form-result",
     props: ['dataValue']
@@ -154,7 +155,7 @@
       ],
       selectedOptions: [ "+" ],
       result: { numeral: "", denominator: "" },
-      reduceFraction: {},
+      reduceFraction: {}
     },
     methods: {
       resetResult() {
@@ -162,7 +163,7 @@
         this.result.denominator = "";
       },
       createFraction() {
-        this.fractions.push({ numeral: "0", denominator: "0" });
+        this.fractions.push({ numeral: 0, denominator: 0 });
         this.selectedOptions.push("+");
         this.resetResult();
       },
@@ -178,6 +179,7 @@
         }
       },
       calculate() {
+        try {
         let denominator = 0;
         let numeral = 0;
         
@@ -190,21 +192,42 @@
             denominator = fracDen;
           } else {
             const currentAction = this.selectedOptions[ index - 1 ];
-            
-            const { den, num } = mathActions[ currentAction ](numeral, denominator, fracNum, fracDen);
+            const operation = mathActions[currentAction];
+            const { den, num } = operation(numeral, denominator, fracNum, fracDen);
   
             numeral = num;
             denominator = den;
           }
         })
-  
+        
         this.smallDenominator(numeral, denominator);
   
         this.result.numeral = numeral;
         this.result.denominator = denominator;
+        } catch (err) {
+          this.errorMessage = err.message
+        }
+      },
+      validate({ numeral, denominator }) {
+        console.log(numeral, denominator)
+        if (parseInt(numeral) === 0 || parseInt(denominator) === 0 ) return "Division by zero";
+        if (isNaN(numeral) || isNaN(denominator)) return "Enter a number";
+        return "";
       },
     },
-    
+    computed: {
+      errorChecking() {
+        let errorMessage;
+        
+        for (let i = 0; i < this.fractions.length; i++) {
+          const fraction = this.fractions[ i ];
+
+          errorMessage = this.validate(fraction);
+        }
+        
+        return errorMessage;
+      }
+    }
   })
 </script>
 </body>
