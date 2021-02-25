@@ -9,7 +9,7 @@
       margin: 0 auto;
     }
     input { width: 4em; }
-    
+
     .data-in {
       display: inline-block;
       position: relative;
@@ -19,13 +19,13 @@
       vertical-align: middle;
       margin: 0 1em;
     }
-    
+
     .add-wrapper { margin-top: 40px; }
     .add {
       cursor: pointer;
       text-decoration: underline;
     }
-    
+
     .error { color: red; }
 
     .close{
@@ -49,7 +49,7 @@
     }
     .close:before { transform: rotate(45deg); }
     .close:after { transform: rotate(-45deg); }
-    
+
     .close:hover { transform: rotate(180deg); }
 
     .fraction-item {
@@ -101,7 +101,7 @@
         v-if="reduceFraction && reduceFraction.numeral"
     ></form-result>
     
-    <p class="error" v-show="errorChecking.length">{{ errorChecking }}</p>
+    <p class="error" v-show="errorMessage.length">{{ errorMessage }}</p>
     
     <p class="add-wrapper">
       <a @click.prevent.stop="createFraction" class="add">ADD FRACTION</a>
@@ -118,9 +118,9 @@
     
         <span class="fraction-option" v-if="list.options[ index ]">{{ list.options[ index ] }}</span>
       </span>
-  
+      
       <span class="fraction-option">=</span>
-  
+      
       <span class="fraction-wrapper">
         <span class="fraction-top">{{ list.result.numeral }}</span>
         <span class="fraction-bottom">{{ list.result.denominator }}</span>
@@ -230,6 +230,7 @@
     el: ".wrapper",
     data: {
       options: [ '+', '-', '*', '/' ],
+      errorMessage: "",
       fractions: [
         { numeral: 6, denominator: 5 },
         { numeral: 3, denominator: 4 },
@@ -237,60 +238,7 @@
       selectedOptions: [ "+" ],
       result: { numeral: "", denominator: "" },
       reduceFraction: { numeral: "", denominator: "" },
-      fractionList: [
-        {
-        "fractions": [
-          {
-            "numeral": 6,
-            "denominator": 5
-          },
-          {
-            "numeral": 3,
-            "denominator": 4
-          }
-        ],
-        "options": [
-          "+"
-        ],
-        "result": {
-          "numeral": 39,
-          "denominator": 20
-        },
-          "reduceFraction": {
-          "numeral": "",
-          "denominator": ""
-        },
-        
-      },
-        {
-          "fractions": [
-            {
-              "numeral": 6,
-              "denominator": 5
-            },
-            {
-              "numeral": 4,
-              "denominator": 4
-            },
-            {
-              "numeral": 2,
-              "denominator": 1
-            }
-          ],
-          "options": [
-            "/",
-            "+"
-          ],
-          "result": {
-            "numeral": 64,
-            "denominator": 20
-          },
-          "reduceFraction": {
-            "numeral": 5,
-            "denominator": 2
-          },
-        }
-      ]
+      fractionList: []
     },
     methods: {
       resetResult() {
@@ -334,32 +282,36 @@
         })
       },
       calculate() {
-          let denominator = 0;
-          let numeral = 0;
+        let denominator = 0;
+        let numeral = 0;
+        
+        this.fractions.forEach((fraction, index) => {
+          const fracNum = parseInt(fraction.numeral);
+          const fracDen = parseInt(fraction.denominator);
           
-          this.fractions.forEach((fraction, index) => {
-            const fracNum = parseInt(fraction.numeral);
-            const fracDen = parseInt(fraction.denominator);
+          this.errorMessage = this.validate(fraction);
+          
+          if (index === 0) {
+            numeral = fracNum;
+            denominator = fracDen;
+          } else {
+            const currentAction = this.selectedOptions[ index - 1 ];
+            const operation = mathActions[currentAction];
+            const { den, num } = operation(numeral, denominator, fracNum, fracDen);
             
-            if (index === 0) {
-              numeral = fracNum;
-              denominator = fracDen;
-            } else {
-              const currentAction = this.selectedOptions[ index - 1 ];
-              const operation = mathActions[currentAction];
-              const { den, num } = operation(numeral, denominator, fracNum, fracDen);
-              
-              numeral = num;
-              denominator = den;
-            }
-          })
-          
-          this.smallDenominator(numeral, denominator);
-          
-          this.result.numeral = numeral;
-          this.result.denominator = denominator;
-          
-          this.addToFractionList();
+            numeral = num;
+            denominator = den;
+          }
+        })
+        
+        if (this.errorMessage.length) return;
+        
+        this.smallDenominator(numeral, denominator);
+        
+        this.result.numeral = numeral;
+        this.result.denominator = denominator;
+        
+        this.addToFractionList();
       },
       validate({ numeral, denominator }) {
         if (parseInt(numeral) === 0 || parseInt(denominator) === 0 ) return "Division by zero";
@@ -367,19 +319,6 @@
         
         return "";
       },
-    },
-    computed: {
-      errorChecking() {
-        let errorMessage;
-        
-        for (let i = 0; i < this.fractions.length; i++) {
-          const fraction = this.fractions[ i ];
-          
-          errorMessage = this.validate(fraction);
-        }
-        
-        return errorMessage;
-      }
     }
   })
 </script>
