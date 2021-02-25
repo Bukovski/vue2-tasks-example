@@ -52,6 +52,25 @@
     
     .close:hover { transform: rotate(180deg); }
 
+    .fraction-item {
+      position: relative;
+    }
+    .fraction-wrapper, .fraction-top, .fraction-bottom { padding: 0 5px; }
+    .fraction-wrapper {
+      display: inline-block;
+      text-align: center;
+    }
+    .fraction-bottom{
+      border-top: 1px solid #000;
+      display: block;
+    }
+    .fraction-option {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      position: relative;
+      bottom: 10px;
+    }
   </style>
   <script src="../assets/scripts/vue.js"></script>
 </head>
@@ -88,6 +107,35 @@
       <a @click.prevent.stop="createFraction" class="add">ADD FRACTION</a>
     </p>
   </form>
+  
+  <div v-show="fractionList.length" v-for="list in fractionList">
+    <div class="fraction-item">
+      <span v-for="(fraction, index) in list.fractions ">
+        <span class="fraction-wrapper">
+          <span class="fraction-top">{{ fraction.numeral }}</span>
+          <span class="fraction-bottom">{{ fraction.denominator }}</span>
+        </span>
+    
+        <span class="fraction-option" v-if="list.options[ index ]">{{ list.options[ index ] }}</span>
+      </span>
+  
+      <span class="fraction-option">=</span>
+  
+      <span class="fraction-wrapper">
+        <span class="fraction-top">{{ list.result.numeral }}</span>
+        <span class="fraction-bottom">{{ list.result.denominator }}</span>
+      </span>
+      
+      <span v-if="list.reduceFraction.numeral">
+        <span class="fraction-option">=</span>
+    
+        <span class="fraction-wrapper">
+          <span class="fraction-top">{{ list.reduceFraction.numeral }}</span>
+          <span class="fraction-bottom">{{ list.reduceFraction.denominator }}</span>
+        </span>
+      </span>
+    </div>
+  </div>
   
   <pre>{{ $data }}</pre>
 </div>
@@ -188,17 +236,77 @@
       ],
       selectedOptions: [ "+" ],
       result: { numeral: "", denominator: "" },
-      reduceFraction: {}
+      reduceFraction: { numeral: "", denominator: "" },
+      fractionList: [
+        {
+        "fractions": [
+          {
+            "numeral": 6,
+            "denominator": 5
+          },
+          {
+            "numeral": 3,
+            "denominator": 4
+          }
+        ],
+        "options": [
+          "+"
+        ],
+        "result": {
+          "numeral": 39,
+          "denominator": 20
+        },
+          "reduceFraction": {
+          "numeral": "",
+          "denominator": ""
+        },
+        
+      },
+        {
+          "fractions": [
+            {
+              "numeral": 6,
+              "denominator": 5
+            },
+            {
+              "numeral": 4,
+              "denominator": 4
+            },
+            {
+              "numeral": 2,
+              "denominator": 1
+            }
+          ],
+          "options": [
+            "/",
+            "+"
+          ],
+          "result": {
+            "numeral": 64,
+            "denominator": 20
+          },
+          "reduceFraction": {
+            "numeral": 5,
+            "denominator": 2
+          },
+        }
+      ]
     },
     methods: {
       resetResult() {
         this.result.numeral = "";
         this.result.denominator = "";
       },
+      resetReduceFraction() {
+        this.reduceFraction.numeral = "";
+        this.reduceFraction.denominator = "";
+      },
       createFraction() {
         this.fractions.push({ numeral: 0, denominator: 0 });
         this.selectedOptions.push("+");
+        
         this.resetResult();
+        this.resetReduceFraction();
       },
       smallDenominator(numeral, denominator) {
         let { num, den } = simplify(numeral, denominator);
@@ -207,16 +315,25 @@
           this.reduceFraction.numeral = num;
           this.reduceFraction.denominator = den;
         } else {
-          delete this.reduceFraction.numeral;
-          delete this.reduceFraction.denominator;
+          this.resetReduceFraction();
         }
       },
       removeFraction(index) {
         this.fractions.splice(index, 1);
-        this.selectedOptions.splice(index, 1);
+        this.selectedOptions.splice(index - 1, 1);
+        
+        this.resetResult();
+        this.resetReduceFraction();
+      },
+      addToFractionList() {
+        this.fractionList.push({
+          fractions: Object.assign({}, this.fractions),
+          options: Object.assign({}, this.selectedOptions),
+          result: Object.assign({}, this.result),
+          reduceFraction: Object.assign({}, this.reduceFraction)
+        })
       },
       calculate() {
-        try {
           let denominator = 0;
           let numeral = 0;
           
@@ -241,9 +358,8 @@
           
           this.result.numeral = numeral;
           this.result.denominator = denominator;
-        } catch (err) {
-          this.errorMessage = err.message
-        }
+          
+          this.addToFractionList();
       },
       validate({ numeral, denominator }) {
         if (parseInt(numeral) === 0 || parseInt(denominator) === 0 ) return "Division by zero";
@@ -269,4 +385,3 @@
 </script>
 </body>
 </html>
-
