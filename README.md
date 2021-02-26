@@ -41,6 +41,7 @@ Training tasks for practice working with `Vue.js`. But they will also be suitabl
   `SELECT` is used to save inputs locally.
 - If you click on the `CLEAR FRACTION LIST` button, all stored computing will be removed
 - All data is stored in `localStorage`.
+- Error output is provided
 
 ![fraction-calculator](./preview-image/6.fraction-calculator.jpg)
 ![fraction-calculator-error](./preview-image/7.fraction-calculator-error.jpg)
