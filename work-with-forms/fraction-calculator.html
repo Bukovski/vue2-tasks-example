@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"/>
   <title>Fraction calculator</title>
   <style>
     form {
@@ -94,13 +94,13 @@
     
     <div class="data-in" v-for="(fraction, index) in fractions" :key="index">
       <span class="close" @click="removeFraction(index)"></span>
-      
+  
       <select v-model="selectedOptions[ index - 1 ]" v-if="index > 0">
         <option v-for="option in options" :value="option">
           {{ option }}
         </option>
       </select>
-      
+  
       <div class="fraction">
         <input type="number" v-model.number="fraction.numeral">
         <hr>
@@ -311,15 +311,15 @@
         this.resetResult();
         this.resetReduceFraction();
       },
-      clearList(bool) {
+      clearList() {
         const parsed = JSON.stringify(this.clearList);
         localStorage.setItem('clearList', parsed);
         localStorage.removeItem('fractions');
       },
       fractions: {
-        handler: function (after, before) {
+        handler(value) {
           if (!this.clearList) {
-            const parsed = JSON.stringify(after);
+            const parsed = JSON.stringify(value);
             localStorage.setItem('fractions', parsed)
           }
         },
@@ -335,10 +335,6 @@
       removeFractionList() {
         this.fractionList = [];
         this.saveFractionList();
-      },
-      saveClearList() {
-        const parsed = JSON.stringify(this.clearList);
-        localStorage.setItem('clearList', parsed);
       },
       
       resetResult() {
