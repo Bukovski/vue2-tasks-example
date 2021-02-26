@@ -33,5 +33,19 @@ Training tasks for practice working with `Vue.js`. But they will also be suitabl
 ![result-guest-form](./preview-image/5.result-guest-form.jpg)
 
 
+2. fraction-calculator
+
+- When you click on `ADD FRACTION`, a new "fraction" box is added with select to select a mathematical operation
+- At the bottom there is a button (red cross) to remove the superfluous "fraction"
+- If you click on the `CLEAR CALCULATE FIELDS` button, all fields will be removed and replaced with default data.
+  `SELECT` is used to save inputs locally.
+- If you click on the `CLEAR FRACTION LIST` button, all stored computing will be removed
+- All data is stored in `localStorage`.
+
+![fraction-calculator](./preview-image/6.fraction-calculator.jpg)
+![fraction-calculator-error](./preview-image/7.fraction-calculator-error.jpg)
+
+
+
 ## 3. Mini tasks
 * contains tasks for exploring the main features Vue.js
