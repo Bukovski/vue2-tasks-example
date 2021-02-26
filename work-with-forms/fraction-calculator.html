@@ -13,6 +13,7 @@
     .data-in {
       display: inline-block;
       position: relative;
+      margin-bottom: 12px;
     }
     .fraction {
       display: inline-block;
@@ -20,9 +21,13 @@
       margin: 0 1em;
     }
 
-    .action-bottom-wrapper { margin-top: 40px; }
+    .action-bottom-wrapper {
+      width: 265px;
+    }
     .action-bottom {
+      display: block;
       margin: 0 15px;
+      padding: 2px 0;
       cursor: pointer;
       text-decoration: underline;
     }
@@ -31,7 +36,10 @@
       width: 20px;
     }
 
-    .error { color: red; }
+    .error {
+      margin-left: 15px;
+      color: red;
+    }
 
     .close{
       position: absolute;
@@ -109,11 +117,11 @@
     <p class="error" v-show="errorMessage.length">{{ errorMessage }}</p>
     
     <p class="action-bottom-wrapper">
-      <span class="action-bottom" @click.self="resetCalculateFractions">
-        <input type="checkbox" v-model="clearList">
-        CLEAR CALCULATE FIELDS
-      </span>
       <a @click.prevent.stop="createFraction" class="action-bottom">ADD FRACTION</a>
+      <span class="action-bottom" @click.self="resetCalculateFractions">
+        CLEAR CALCULATE FIELDS
+        <input type="checkbox" v-model="clearList">
+      </span>
       <a @click.prevent.stop="removeFractionList" class="action-bottom">CLEAR FRACTION LIST</a>
     </p>
   </form>
@@ -275,8 +283,8 @@
         }
       } else {
         this.fractions = [
-          {numeral: 0, denominator: 0},
-          {numeral: 0, denominator: 0},
+          { numeral: 0, denominator: 0 },
+          { numeral: 0, denominator: 0 },
         ];
       }
       
@@ -295,6 +303,10 @@
       selectedOptions() {
         const parsed = JSON.stringify(this.selectedOptions);
         localStorage.setItem('selectedOptions', parsed)
+        
+        if (!this.selectedOptions.length) {
+          localStorage.removeItem('selectedOptions');
+        }
         
         this.resetResult();
         this.resetReduceFraction();
@@ -327,9 +339,6 @@
       saveClearList() {
         const parsed = JSON.stringify(this.clearList);
         localStorage.setItem('clearList', parsed);
-      },
-      saveDataLocal() {
-        this.saveFractionList();
       },
       
       resetResult() {
@@ -413,7 +422,7 @@
         this.result.denominator = denominator;
         
         this.addToFractionList();
-        this.saveDataLocal();
+        this.saveFractionList();
       },
       validate({ numeral, denominator }) {
         if (parseInt(numeral) === 0 || parseInt(denominator) === 0 ) return "Division by zero";
