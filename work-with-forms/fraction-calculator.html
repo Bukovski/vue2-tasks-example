@@ -137,8 +137,6 @@
       </span>
     </div>
   </div>
-  
-  <pre>{{ $data }}</pre>
 </div>
 
 <template id="form-result">
@@ -245,11 +243,8 @@
       options: [ '+', '-', '*', '/' ],
       errorMessage: "",
       clearList: false,
-      fractions: [
-        { numeral: 6, denominator: 5 },
-        { numeral: 3, denominator: 4 },
-      ],
-      selectedOptions: [ "+" ],
+      fractions: [],
+      selectedOptions: [],
       result: { numeral: "", denominator: "" },
       reduceFraction: { numeral: "", denominator: "" },
       fractionList: []
@@ -278,6 +273,11 @@
         } catch(e) {
           localStorage.removeItem('fractions');
         }
+      } else {
+        this.fractions = [
+          {numeral: 0, denominator: 0},
+          {numeral: 0, denominator: 0},
+        ];
       }
       
       if (localStorage.getItem('selectedOptions')) {
@@ -286,6 +286,8 @@
         } catch(e) {
           localStorage.removeItem('selectedOptions');
         }
+      } else {
+        this.selectedOptions = [ "+" ];
       }
     },
     
