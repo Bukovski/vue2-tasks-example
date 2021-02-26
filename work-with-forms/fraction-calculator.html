@@ -20,8 +20,9 @@
       margin: 0 1em;
     }
 
-    .add-wrapper { margin-top: 40px; }
-    .add {
+    .action-bottom-wrapper { margin-top: 40px; }
+    .action-bottom {
+      margin: 0 15px;
       cursor: pointer;
       text-decoration: underline;
     }
@@ -103,8 +104,9 @@
     
     <p class="error" v-show="errorMessage.length">{{ errorMessage }}</p>
     
-    <p class="add-wrapper">
-      <a @click.prevent.stop="createFraction" class="add">ADD FRACTION</a>
+    <p class="action-bottom-wrapper">
+      <a @click.prevent.stop="createFraction" class="action-bottom">ADD FRACTION</a>
+      <a @click.prevent.stop="removeFractionList" class="action-bottom">CLEAR FRACTION LIST</a>
     </p>
   </form>
   
@@ -243,7 +245,28 @@
       reduceFraction: { numeral: "", denominator: "" },
       fractionList: []
     },
+    mounted() {
+      if (localStorage.getItem('fractionList')) {
+        try {
+          this.fractionList = JSON.parse(localStorage.getItem('fractionList'));
+        } catch(e) {
+          localStorage.removeItem('fractionList');
+        }
+      }
+    },
     methods: {
+      saveFractionList() {
+        const parsed = JSON.stringify(this.fractionList);
+        localStorage.setItem('fractionList', parsed);
+      },
+      removeFractionList() {
+        this.fractionList = [];
+        this.saveFractionList();
+      },
+      saveDataLocal() {
+        this.saveFractionList();
+      },
+      
       resetResult() {
         this.result.numeral = "";
         this.result.denominator = "";
@@ -315,6 +338,7 @@
         this.result.denominator = denominator;
         
         this.addToFractionList();
+        this.saveDataLocal();
       },
       validate({ numeral, denominator }) {
         if (parseInt(numeral) === 0 || parseInt(denominator) === 0 ) return "Division by zero";
