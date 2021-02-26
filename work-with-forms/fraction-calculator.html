@@ -110,29 +110,20 @@
   
   <div v-show="fractionList.length" v-for="list in fractionList">
     <div class="fraction-item">
+      
       <span v-for="(fraction, index) in list.fractions ">
-        <span class="fraction-wrapper">
-          <span class="fraction-top">{{ fraction.numeral }}</span>
-          <span class="fraction-bottom">{{ fraction.denominator }}</span>
+        <fractal-templ :fractal-object="fraction"></fractal-templ>
+        <span class="fraction-option" v-if="list.options[ index ]">
+          {{ list.options[ index ] }}
         </span>
-    
-        <span class="fraction-option" v-if="list.options[ index ]">{{ list.options[ index ] }}</span>
       </span>
       
       <span class="fraction-option">=</span>
-      
-      <span class="fraction-wrapper">
-        <span class="fraction-top">{{ list.result.numeral }}</span>
-        <span class="fraction-bottom">{{ list.result.denominator }}</span>
-      </span>
+      <fractal-templ :fractal-object="list.result"></fractal-templ>
       
       <span v-if="list.reduceFraction.numeral">
         <span class="fraction-option">=</span>
-    
-        <span class="fraction-wrapper">
-          <span class="fraction-top">{{ list.reduceFraction.numeral }}</span>
-          <span class="fraction-bottom">{{ list.reduceFraction.denominator }}</span>
-        </span>
+        <fractal-templ :fractal-object="list.reduceFraction"></fractal-templ>
       </span>
     </div>
   </div>
@@ -148,6 +139,13 @@
       <hr />
       <input type="number" readonly :value="dataValue.denominator"/>
     </div>
+  </span>
+</template>
+
+<template id="fractal-templ">
+  <span class="fraction-wrapper">
+    <span class="fraction-top">{{ fractalObject.numeral }}</span>
+    <span class="fraction-bottom">{{ fractalObject.denominator }}</span>
   </span>
 </template>
 
@@ -226,6 +224,11 @@
     props: ['dataValue']
   });
   
+  Vue.component('fractal-templ', {
+    template: "#fractal-templ",
+    props: ['fractalObject']
+  });
+  
   new Vue({
     el: ".wrapper",
     data: {
@@ -250,8 +253,8 @@
         this.reduceFraction.denominator = "";
       },
       createFraction() {
-        this.fractions.push({ numeral: 0, denominator: 0 });
-        this.selectedOptions.push("+");
+        this.fractions.push({ numeral: 0, denominator: 0 }); // default
+        this.selectedOptions.push("+"); // default
         
         this.resetResult();
         this.resetReduceFraction();
