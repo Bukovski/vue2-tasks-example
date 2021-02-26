@@ -26,6 +26,10 @@
       cursor: pointer;
       text-decoration: underline;
     }
+    .action-bottom input {
+      margin: 0;
+      width: 20px;
+    }
 
     .error { color: red; }
 
@@ -105,6 +109,10 @@
     <p class="error" v-show="errorMessage.length">{{ errorMessage }}</p>
     
     <p class="action-bottom-wrapper">
+      <span class="action-bottom" @click.self="resetCalculateFractions">
+        <input type="checkbox" v-model="clearList">
+        CLEAR CALCULATE FIELDS
+      </span>
       <a @click.prevent.stop="createFraction" class="action-bottom">ADD FRACTION</a>
       <a @click.prevent.stop="removeFractionList" class="action-bottom">CLEAR FRACTION LIST</a>
     </p>
@@ -236,6 +244,7 @@
     data: {
       options: [ '+', '-', '*', '/' ],
       errorMessage: "",
+      clearList: false,
       fractions: [
         { numeral: 6, denominator: 5 },
         { numeral: 3, denominator: 4 },
@@ -245,6 +254,7 @@
       reduceFraction: { numeral: "", denominator: "" },
       fractionList: []
     },
+    
     mounted() {
       if (localStorage.getItem('fractionList')) {
         try {
@@ -253,7 +263,56 @@
           localStorage.removeItem('fractionList');
         }
       }
+  
+      if (localStorage.getItem('clearList')) {
+        try {
+          this.clearList = JSON.parse(localStorage.getItem('clearList'));
+        } catch(e) {
+          localStorage.removeItem('clearList');
+        }
+      }
+  
+      if (localStorage.getItem('fractions')) {
+        try {
+          this.fractions = JSON.parse(localStorage.getItem('fractions'));
+        } catch(e) {
+          localStorage.removeItem('fractions');
+        }
+      }
+      
+      if (localStorage.getItem('selectedOptions')) {
+        try {
+          this.selectedOptions = JSON.parse(localStorage.getItem('selectedOptions'));
+        } catch(e) {
+          localStorage.removeItem('selectedOptions');
+        }
+      }
     },
+    
+    watch: {
+      selectedOptions() {
+        const parsed = JSON.stringify(this.selectedOptions);
+        localStorage.setItem('selectedOptions', parsed)
+        
+        this.resetResult();
+        this.resetReduceFraction();
+      },
+      clearList(bool) {
+        const parsed = JSON.stringify(this.clearList);
+        localStorage.setItem('clearList', parsed);
+        localStorage.removeItem('fractions');
+      },
+      fractions: {
+        handler: function (after, before) {
+          if (!this.clearList) {
+            const parsed = JSON.stringify(after);
+            localStorage.setItem('fractions', parsed)
+          }
+        },
+        deep: true
+      }
+    },
+    
     methods: {
       saveFractionList() {
         const parsed = JSON.stringify(this.fractionList);
@@ -262,6 +321,10 @@
       removeFractionList() {
         this.fractionList = [];
         this.saveFractionList();
+      },
+      saveClearList() {
+        const parsed = JSON.stringify(this.clearList);
+        localStorage.setItem('clearList', parsed);
       },
       saveDataLocal() {
         this.saveFractionList();
@@ -274,6 +337,16 @@
       resetReduceFraction() {
         this.reduceFraction.numeral = "";
         this.reduceFraction.denominator = "";
+      },
+      resetCalculateFractions() {
+        this.fractions = [
+          { numeral: 0, denominator: 0 },
+          { numeral: 0, denominator: 0 },
+        ];
+        this.selectedOptions = [ "+" ];
+  
+        this.resetResult();
+        this.resetReduceFraction();
       },
       createFraction() {
         this.fractions.push({ numeral: 0, denominator: 0 }); // default
@@ -300,7 +373,7 @@
         this.resetReduceFraction();
       },
       addToFractionList() {
-        this.fractionList.push({
+        this.fractionList.unshift({
           fractions: Object.assign({}, this.fractions),
           options: Object.assign({}, this.selectedOptions),
           result: Object.assign({}, this.result),
